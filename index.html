@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест з фізичної культури | Медичний коледж</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+}
+.glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+}
+.container {
+    width: 100%;
+    max-width: 900px;
+    padding: 40px;
+    margin: 20px;
+    position: relative;
+}
+.screen { display: none; }
+.screen.active { display: block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
+h1 {
+    font-size: 2.5em;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+.subtitle {
+    text-align: center;
+    color: #555;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+}
+.info-block {
+    background: rgba(102, 126, 234, 0.08);
+    border-left: 4px solid #667eea;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    font-size: 0.95em;
+    color: #444;
+}
+.form-group { margin-bottom: 20px; }
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+    font-size: 0.95em;
+}
+.form-group input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    font-size: 1em;
+    background: rgba(255, 255, 255, 0.7);
+    transition: all 0.3s;
+}
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+}
+.btn {
+    padding: 14px 32px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.05em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-start { width: 100%; padding: 16px; font-size: 1.2em; margin-top: 20px; }
+
+.header-test {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+.timer-ring {
+    width: 90px;
+    height: 90px;
+    position: relative;
+}
+.timer-ring svg { transform: rotate(-90deg); }
+.timer-ring circle {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+}
+.timer-ring .bg { stroke: rgba(102, 126, 234, 0.15); }
+.timer-ring .progress { stroke: #667eea; transition: stroke-dashoffset 0.1s linear; }
+.timer-ring.critical .progress { stroke: #e74c3c; }
+.timer-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #667eea;
+}
+.timer-ring.critical .timer-text { color: #e74c3c; }
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background: rgba(102, 126, 234, 0.15);
+    border-radius: 10px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 10px;
+    transition: width 0.4s ease;
+    width: 0%;
+}
+.question-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 35px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+.question-text {
+    font-size: 1.35em;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    line-height: 1.5;
+    font-weight: 600;
+}
+.options { display: flex; flex-direction: column; gap: 12px; }
+.option {
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px solid rgba(102, 126, 234, 0.15);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.05em;
+    color: #333;
+    user-select: none;
+}
+.option:hover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.08);
+    transform: translateX(4px);
+}
+.option.selected {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+    border-color: #667eea;
+    font-weight: 600;
+}
+.option.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.violation-notice {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(231, 76, 60, 0.4);
+    font-weight: 600;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateX(120%);
+    transition: all 0.4s;
+    max-width: 320px;
+}
+.violation-notice.show { opacity: 1; transform: translateX(0); }
+.violations-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 600;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.result-screen { text-align: center; padding: 40px 20px; }
+.result-score {
+    font-size: 5em;
+    font-weight: 800;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 20px 0;
+    line-height: 1;
+}
+.result-grade {
+    display: inline-block;
+    padding: 20px 40px;
+    border-radius: 16px;
+    font-size: 1.8em;
+    font-weight: 700;
+    margin: 15px 0;
+    color: white;
+}
+.grade-11 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.grade-10 { background: linear-gradient(135deg, #16a085, #2ecc71); }
+.grade-9  { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+.grade-8  { background: linear-gradient(135deg, #56ab2f, #a8e063); }
+.grade-7  { background: linear-gradient(135deg, #8dc26f, #b5e78d); }
+.grade-6  { background: linear-gradient(135deg, #f7b733, #fc9a1a); }
+.grade-5  { background: linear-gradient(135deg, #f39c12, #e67e22); }
+.grade-4  { background: linear-gradient(135deg, #e67e22, #d35400); }
+.grade-3  { background: linear-gradient(135deg, #f7b733, #fc4a1a); }
+.grade-2  { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+.grade-1  { background: linear-gradient(135deg, #c0392b, #922b21); }
+.grade-0  { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
+.grade-level {
+    display: block;
+    font-size: 0.5em;
+    font-weight: 400;
+    margin-top: 5px;
+    opacity: 0.9;
+}
+
+.result-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin: 30px 0;
+}
+.stat-card {
+    background: rgba(102, 126, 234, 0.08);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+}
+.stat-value { font-size: 1.8em; font-weight: 700; color: #667eea; }
+.stat-label { color: #666; font-size: 0.9em; margin-top: 5px; }
+
+.locked-screen {
+    text-align: center;
+    padding: 50px 30px;
+}
+.locked-screen .lock-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+}
+.locked-screen h2 { color: #e74c3c; margin-bottom: 15px; }
+.locked-screen .details {
+    background: rgba(231, 76, 60, 0.08);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    color: #555;
+}
+
+.grade-scale {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 6px;
+    margin-top: 15px;
+}
+.grade-scale-item {
+    padding: 8px;
+    border-radius: 8px;
+    text-align: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85em;
+}
+
+@media (max-width: 768px) {
+    .container { padding: 25px; margin: 10px; }
+    h1 { font-size: 1.8em; }
+    .question-text { font-size: 1.15em; }
+    .timer-ring { width: 70px; height: 70px; }
+    .timer-text { font-size: 1.4em; }
+    .result-score { font-size: 3.5em; }
+    .result-grade { font-size: 1.4em; padding: 15px 25px; }
+    .grade-scale { grid-template-columns: repeat(auto-fit, minmax(55px, 1fr)); }
+}
+</style>
+</head>
+<body>
+
+<div class="violation-notice" id="violationNotice">
+    ⚠️ <span id="violationMessage">Порушення зафіксовано!</span>
+</div>
+
+<div class="container glass" id="mainContainer">
+
+    <div class="screen active" id="startScreen">
+        <h1>🏃 Тест з фізичної культури</h1>
+        <p class="subtitle">Медичний коледж · Стрибки, біг, витривалість</p>
+        <div class="info-block">
+            <strong>Правила тесту:</strong><br>
+            ⏱ 25 питань · 12 секунд на кожне<br>
+            🎯 <b>11-бальна</b> система оцінювання<br>
+            🔒 Захист від списування активний<br>
+            📱 Результати надсилаються викладачу
+        </div>
+        <div class="info-block" style="border-left-color: #11998e;">
+            <strong>📊 Шкала оцінювання (1–11 балів):</strong>
+            <div class="grade-scale">
+                <div class="grade-scale-item" style="background: linear-gradient(135deg, #11998e, #38ef7d);">11<br><small>Високий</small></div>
+                <div class="grade-scale-item" style="background: linear-gradient(135deg, #16a085, #2ecc71);">10<br><small>Високий</small></div>
+                <div class="grade-scale-item" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">9<br><small>Високий</small></div>
+                <div class="grade-scale-item" style="background: linear-gradient(135deg, #56ab2f, #a8e063);">8<br><small>Достатній</small></div>
+                <div class="grade-scale-item" style="background: linear-gradient(135deg, #8dc26f, #b5e78d);">7<br><small>Достатній</small></div>
+                <div class="grade-scale-item" style="background: linear-gradient(135deg, #f7b733, #fc9a1a);">6<br><small>Середній</small></div>
+                <div class="grade-scale-item" style="background: linear-gradient(135deg, #f39c12, #e67e22);">5<br><small>Середній</small></div>
+                <div class="grade-scale-item" style="background: linear-gradient(135deg, #e67e22, #d35400);">4<br><small>Середній</small></div>
+                <div class="grade-scale-item" style="background: linear-gradient(135deg, #f7b733, #fc4a1a);">3<br><small>Низький</small></div>
+                <div class="grade-scale-item" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">2<br><small>Низький</small></div>
+                <div class="grade-scale-item" style="background: linear-gradient(135deg, #c0392b, #922b21);">1<br><small>Початковий</small></div>
+            </div>
+        </div>
+        <form id="startForm">
+            <div class="form-group">
+                <label>👤 Прізвище та ім'я</label>
+                <input type="text" id="studentName" required placeholder="Наприклад: Шевченко Олена">
+            </div>
+            <div class="form-group">
+                <label>🎓 Група</label>
+                <input type="text" id="studentGroup" required placeholder="Наприклад: МС-21">
+            </div>
+            <button type="submit" class="btn btn-start">🚀 Розпочати тест</button>
+        </form>
+    </div>
+
+    <div class="screen" id="lockedScreen">
+        <div class="locked-screen">
+            <div class="lock-icon">🔒</div>
+            <h2>Доступ заблоковано</h2>
+            <p>Ви вже проходили цей тест на цьому пристрої.</p>
+            <div class="details">
+                <p id="lockedDetails"></p>
+            </div>
+            <p style="color: #777; margin-top: 20px;">Зверніться до викладача для повторного проходження.</p>
+        </div>
+    </div>
+
+    <div class="screen" id="testScreen">
+        <div class="violations-badge" id="violationsBadge">⚠️ Порушень: 0/3</div>
+        <div class="header-test">
+            <div class="timer-ring" id="timerRing">
+                <svg width="100%" height="100%">
+                    <circle class="bg" cx="50%" cy="50%" r="40"/>
+                    <circle class="progress" cx="50%" cy="50%" r="40"
+                        stroke-dasharray="251.2" stroke-dashoffset="0" id="timerCircle"/>
+                </svg>
+                <div class="timer-text" id="timerText">12</div>
+            </div>
+            <div class="question-info">
+                <div style="font-weight: 700; font-size: 1.2em;" id="questionNumber">Питання 1 / 25</div>
+                <div style="color: #666;" id="studentNameTest">Студент</div>
+            </div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="question-card">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsContainer"></div>
+        </div>
+    </div>
+
+    <div class="screen" id="resultScreen">
+        <div class="result-screen">
+            <h1>🎉 Тест завершено!</h1>
+            <div class="result-score" id="resultScore">0%</div>
+            <div class="result-grade" id="resultGrade">0 балів</div>
+            <div class="result-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="statCorrect">0</div>
+                    <div class="stat-label">Правильних</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statWrong">0</div>
+                    <div class="stat-label">Неправильних</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statViolations">0</div>
+                    <div class="stat-label">Порушень</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statTime">0с</div>
+                    <div class="stat-label">Час тесту</div>
+                </div>
+            </div>
+            <div class="info-block" style="text-align: left;">
+                ✅ Результати надіслано викладачу<br>
+                📅 Дата: <span id="resultDate"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const QUESTIONS = [
+    {q: "Скільки фаз має стрибок у довжину?", options: ["3", "4", "5", "6"], correct: 1},
+    {q: "Яка фаза стрибка з розбігу найбільше визначає результат?", options: ["Політ", "Розбіг", "Приземлення", "Поворот у ямі"], correct: 1},
+    {q: "Скільки кроків зазвичай становить розбіг у стрибку з розбігу у студентів?", options: ["6-8", "10-12", "12-16", "20-25"], correct: 2},
+    {q: "Під яким кутом виконується відштовхування у стрибку з місця?", options: ["30°", "45°", "60°", "90°"], correct: 1},
+    {q: "Яка система енергозабезпечення живить стрибок (2-3 секунди)?", options: ["Аеробна", "Гліколіз", "АТФ-КФ", "Креатинфосфатна окремо"], correct: 2},
+    {q: "Яка формула розрахунку максимального пульсу?", options: ["200 - вік", "220 - вік", "210 - вік", "205 - вік"], correct: 1},
+    {q: "Метод розрахунку пульсових зон називається:", options: ["Купера", "Карвонена", "Борга", "Пирогова"], correct: 1},
+    {q: "Скільки триває тест Купера?", options: ["6 хвилин", "12 хвилин", "15 хвилин", "20 хвилин"], correct: 1},
+    {q: "За скільки секунд треба рахувати пульс для швидкого підрахунку ЧСС?", options: ["5 с", "10 с", "15 с", "30 с"], correct: 1},
+    {q: "Який нормальний пульс у спокої для студентів 15-20 років?", options: ["40-60 уд/хв", "60-85 уд/хв", "85-100 уд/хв", "100-120 уд/хв"], correct: 1},
+    {q: "Яка правильна послідовність стартових команд при низькому старті?", options: ["Увага! На старт! Рухай!", "На старт! Увага! Рухай!", "На старт! Рухай! Увага!", "Рухай! Увага! На старт!"], correct: 1},
+    {q: "Яка довжина стартового прискорення на початковому етапі?", options: ["5-10 м", "10-15 м", "20-30 м", "50-60 м"], correct: 2},
+    {q: "Скільки триває максимальна швидкісна робота (алактатна система)?", options: ["2-5 с", "6-20 с", "30-60 с", "1-2 хв"], correct: 1},
+    {q: "Оптимальний кут випуску м'яча для максимальної дальності:", options: ["15°", "30°", "45°", "90°"], correct: 2},
+    {q: "З якої ланки починається рух при метанні за принципом «батога»?", options: ["З руки", "З плеча", "З ніг", "З корпусу"], correct: 2},
+    {q: "Що означає скорочення ЗРВ?", options: ["Загальна рухова витривалість", "Загальнорозвивальні вправи", "Захисно-реабілітаційна витривалість", "Змагально-розвивальні вправи"], correct: 1},
+    {q: "Яка частина уроку найкраща для розвитку швидкості?", options: ["На початку розминки", "В основній після розминки", "У заминці", "Після бігу"], correct: 1},
+    {q: "Який пульс повинен бути після повільного бігу (аеробна зона)?", options: ["100-120 уд/хв", "120-150 уд/хв", "160-180 уд/хв", "180-200 уд/хв"], correct: 1},
+    {q: "Що таке «фартлек»?", options: ["Інтервальний біг", "Гра швидкостями по самопочуттю", "Спринт 100 м", "Біг на місці"], correct: 1},
+    {q: "На якій артерії найчастіше вимірюють пульс?", options: ["Сонній", "Променевій", "Стегновій", "Підключичній"], correct: 1},
+    {q: "Скільки часу потрібно для відновлення АТФ-КФ системи між спробами?", options: ["10-20 с", "30-40 с", "60-90 с", "5-10 хв"], correct: 2},
+    {q: "Яка шкала використовується для суб'єктивної оцінки навантаження?", options: ["Карвонена", "Купера", "Борга", "Гарвардська"], correct: 2},
+    {q: "Яка дихальна схема використовується у заминці?", options: ["2-4-6", "4-2-6", "3-3-3", "5-5-5"], correct: 1},
+    {q: "Який м'яз є головним розгиначем коліна при стрибках?", options: ["Двоголовий м'яз стегна", "Чотириголовий м'яз стегна", "Литковий м'яз", "Кравецький м'яз"], correct: 1},
+    {q: "Що є стоп-сигналом для припинення заняття?", options: ["Легка втома", "Пітливість", "Біль у ділянці серця", "Почервоніння шкіри"], correct: 2}
+];
+
+const CONFIG = {
+    QUESTIONS_COUNT: 25,
+    TIME_PER_QUESTION: 12,
+    MAX_VIOLATIONS: 3,
+    BOT_TOKEN: '8977852457:AAH1jJz54Wb5WFxNn1CrpBlRKbML7Pf_2zs',
+    CHAT_ID: '622617127',
+    TOPIC: 'Стрибки, біг, витривалість'
+};
+
+let state = {
+    currentQuestion: 0,
+    questions: [],
+    answers: [],
+    violations: 0,
+    startTime: null,
+    timer: null,
+    timeLeft: CONFIG.TIME_PER_QUESTION,
+    studentName: '',
+    studentGroup: '',
+    isInTest: false,
+    finished: false,  // ✅ НОВИЙ ПРАПОРЕЦЬ
+    answerTimeout: null  // ✅ ЗБЕРІГАЄМО setTimeout
+};
+
+function checkPreviousAttempts(name) {
+    try {
+        const attempts = JSON.parse(localStorage.getItem('physTestAttempts') || '{}');
+        return attempts[name.toLowerCase()] || null;
+    } catch(e) { return null; }
+}
+
+function saveAttempt(name, grade, score, violations) {
+    try {
+        const attempts = JSON.parse(localStorage.getItem('physTestAttempts') || '{}');
+        attempts[name.toLowerCase()] = {
+            date: new Date().toLocaleString('uk-UA'),
+            grade: grade,
+            score: score,
+            violations: violations
+        };
+        localStorage.setItem('physTestAttempts', JSON.stringify(attempts));
+    } catch(e) {}
+}
+
+function showViolation(message) {
+    state.violations++;
+    const notice = document.getElementById('violationNotice');
+    const msg = document.getElementById('violationMessage');
+    msg.textContent = message + ` (${state.violations}/${CONFIG.MAX_VIOLATIONS})`;
+    notice.classList.add('show');
+    setTimeout(() => notice.classList.remove('show'), 3500);
+    document.getElementById('violationsBadge').textContent = `⚠️ Порушень: ${state.violations}/${CONFIG.MAX_VIOLATIONS}`;
+    
+    if (state.violations >= CONFIG.MAX_VIOLATIONS) {
+        finishTest(true);
+    }
+}
+
+document.addEventListener('visibilitychange', () => {
+    if (state.isInTest && !state.finished && document.hidden) {
+        showViolation('⚠️ Виявлено перемикання вкладки!');
+    }
+});
+
+window.addEventListener('blur', () => {
+    if (state.isInTest && !state.finished) {
+        showViolation('⚠️ Вікно втратило фокус!');
+    }
+});
+
+document.addEventListener('fullscreenchange', () => {
+    if (state.isInTest && !state.finished && !document.fullscreenElement) {
+        showViolation('⚠️ Вихід з повноекранного режиму!');
+        setTimeout(() => {
+            if (state.isInTest && !state.finished && !document.fullscreenElement) {
+                enterFullscreen();
+            }
+        }, 100);
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (!state.isInTest || state.finished) return;
+    if (e.key === 'F12' || 
+        (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'u' || e.key === 'p')) ||
+        (e.shiftKey && e.key === 'F12') ||
+        e.key === 'PrintScreen' ||
+        (e.altKey && e.key === 'Tab') ||
+        (e.ctrlKey && e.key === 's')) {
+        e.preventDefault();
+        e.stopPropagation();
+        showViolation(`⚠️ Заблоковано клавішу: ${e.key}`);
+        return false;
+    }
+});
+
+document.addEventListener('contextmenu', (e) => {
+    if (state.isInTest && !state.finished) {
+        e.preventDefault();
+        showViolation('⚠️ Правий клік заблоковано!');
+        return false;
+    }
+});
+
+document.addEventListener('selectstart', (e) => {
+    if (state.isInTest && !state.finished) e.preventDefault();
+});
+
+document.addEventListener('keyup', (e) => {
+    if (state.isInTest && !state.finished && e.key === 'PrintScreen') {
+        navigator.clipboard.writeText('').catch(()=>{});
+        showViolation('⚠️ PrintScreen заблоковано!');
+    }
+});
+
+function enterFullscreen() {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) elem.requestFullscreen();
+    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+}
+
+function shuffleArray(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function prepareQuestions() {
+    const shuffled = shuffleArray(QUESTIONS).slice(0, CONFIG.QUESTIONS_COUNT);
+    return shuffled.map(q => {
+        const optionsWithIdx = q.options.map((opt, idx) => ({text: opt, isCorrect: idx === q.correct}));
+        const shuffledOptions = shuffleArray(optionsWithIdx);
+        return {
+            question: q.q,
+            options: shuffledOptions
+        };
+    });
+}
+
+function startTest(e) {
+    e.preventDefault();
+    const name = document.getElementById('studentName').value.trim();
+    const group = document.getElementById('studentGroup').value.trim();
+    
+    if (!name || !group) {
+        alert('Будь ласка, заповніть усі поля');
+        return;
+    }
+    
+    const previous = checkPreviousAttempts(name);
+    if (previous) {
+        document.getElementById('lockedDetails').innerHTML = 
+            `<strong>ПІБ:</strong> ${name}<br>
+             <strong>📅 Дата:</strong> ${previous.date}<br>
+             <strong>🎯 Оцінка:</strong> ${previous.grade} балів<br>
+             <strong>📊 Результат:</strong> ${previous.score}% правильних відповідей`;
+        showScreen('lockedScreen');
+        return;
+    }
+    
+    state.studentName = name;
+    state.studentGroup = group;
+    state.questions = prepareQuestions();
+    state.answers = [];
+    state.currentQuestion = 0;
+    state.violations = 0;
+    state.finished = false;
+    state.startTime = Date.now();
+    state.isInTest = true;
+    
+    document.getElementById('studentNameTest').textContent = `${name} · ${group}`;
+    showScreen('testScreen');
+    enterFullscreen();
+    showQuestion();
+}
+
+function showQuestion() {
+    // ✅ ПЕРЕВІРКА: якщо тест вже завершений - нічого не робимо
+    if (state.finished) return;
+    
+    if (state.currentQuestion >= state.questions.length) {
+        finishTest(false);
+        return;
+    }
+    
+    const q = state.questions[state.currentQuestion];
+    document.getElementById('questionNumber').textContent = 
+        `Питання ${state.currentQuestion + 1} / ${state.questions.length}`;
+    document.getElementById('questionText').textContent = q.question;
+    
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    
+    q.options.forEach((opt, idx) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.textContent = opt.text;
+        div.onclick = () => selectOption(idx);
+        container.appendChild(div);
+    });
+    
+    const progress = ((state.currentQuestion) / state.questions.length) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+    
+    startTimer();
+}
+
+function selectOption(idx) {
+    // ✅ ПЕРЕВІРКА: якщо тест завершений - ігноруємо клік
+    if (!state.isInTest || state.finished) return;
+    
+    const options = document.querySelectorAll('.option');
+    
+    // ✅ Блокуємо всі опції після вибору
+    options.forEach((o, i) => {
+        o.classList.toggle('selected', i === idx);
+        o.classList.add('disabled');
+        o.onclick = null;  // ✅ Вимикаємо повторні кліки
+    });
+    
+    // ✅ Очищуємо попередній setTimeout якщо є
+    if (state.answerTimeout) {
+        clearTimeout(state.answerTimeout);
+    }
+    
+    // ✅ Зберігаємо новий setTimeout
+    state.answerTimeout = setTimeout(() => {
+        if (!state.isInTest || state.finished) return;  // ✅ Захист від race condition
+        
+        state.answers.push(idx);
+        state.answerTimeout = null;
+        state.currentQuestion++;
+        showQuestion();
+    }, 400);
+}
+
+function startTimer() {
+    state.timeLeft = CONFIG.TIME_PER_QUESTION;
+    updateTimer();
+    
+    if (state.timer) {
+        clearInterval(state.timer);
+        state.timer = null;
+    }
+    
+    state.timer = setInterval(() => {
+        if (!state.isInTest || state.finished) {
+            clearInterval(state.timer);
+            state.timer = null;
+            return;
+        }
+        
+        state.timeLeft -= 0.1;
+        if (state.timeLeft <= 0) {
+            state.timeLeft = 0;
+            clearInterval(state.timer);
+            state.timer = null;
+            
+            // ✅ Очищуємо setTimeout якщо є
+            if (state.answerTimeout) {
+                clearTimeout(state.answerTimeout);
+                state.answerTimeout = null;
+            }
+            
+            state.answers.push(-1);
+            state.currentQuestion++;
+            showQuestion();
+        } else {
+            updateTimer();
+        }
+    }, 100);
+}
+
+function updateTimer() {
+    const text = document.getElementById('timerText');
+    const ring = document.getElementById('timerRing');
+    const circle = document.getElementById('timerCircle');
+    
+    text.textContent = Math.ceil(state.timeLeft);
+    const progress = state.timeLeft / CONFIG.TIME_PER_QUESTION;
+    const circumference = 251.2;
+    circle.style.strokeDashoffset = circumference * (1 - progress);
+    
+    if (state.timeLeft <= 5) {
+        ring.classList.add('critical');
+    } else {
+        ring.classList.remove('critical');
+    }
+}
+
+function calculateGrade(correct, total) {
+    const percent = (correct / total) * 100;
+    
+    if (percent >= 97) return { grade: 11, level: "Високий" };
+    if (percent >= 90) return { grade: 10, level: "Високий" };
+    if (percent >= 83) return { grade: 9,  level: "Високий" };
+    if (percent >= 75) return { grade: 8,  level: "Достатній" };
+    if (percent >= 68) return { grade: 7,  level: "Достатній" };
+    if (percent >= 60) return { grade: 6,  level: "Середній" };
+    if (percent >= 52) return { grade: 5,  level: "Середній" };
+    if (percent >= 44) return { grade: 4,  level: "Середній" };
+    if (percent >= 36) return { grade: 3,  level: "Низький" };
+    if (percent >= 25) return { grade: 2,  level: "Низький" };
+    return { grade: 1, level: "Початковий" };
+}
+
+function finishTest(forceZero = false) {
+    // ✅ ЗАХИСТ ВІД ПОВТОРНОГО ВИКЛИКУ
+    if (state.finished) return;
+    state.finished = true;
+    state.isInTest = false;
+    
+    // ✅ Очищуємо всі таймери
+    if (state.timer) {
+        clearInterval(state.timer);
+        state.timer = null;
+    }
+    if (state.answerTimeout) {
+        clearTimeout(state.answerTimeout);
+        state.answerTimeout = null;
+    }
+    
+    // ✅ Безпечний вихід з повноекранного режиму
+    if (document.fullscreenElement) {
+        try {
+            const exitPromise = document.exitFullscreen();
+            if (exitPromise && typeof exitPromise.catch === 'function') {
+                exitPromise.catch(() => {});
+            }
+        } catch(e) {}
+    }
+    
+    let correct = 0;
+    let unanswered = 0;
+    
+    if (!forceZero) {
+        state.questions.forEach((q, idx) => {
+            const userAnswer = state.answers[idx];
+            if (userAnswer === -1 || userAnswer === undefined || userAnswer === null) {
+                unanswered++;
+            } else if (userAnswer >= 0 && userAnswer < q.options.length && q.options[userAnswer].isCorrect) {
+                correct++;
+            }
+        });
+    }
+    
+    const total = state.questions.length;
+    const wrong = total - correct - unanswered;
+    const percent = forceZero ? 0 : Math.round((correct / total) * 100);
+    const gradeObj = forceZero ? { grade: 0, level: "Анульовано" } : calculateGrade(correct, total);
+    const grade = gradeObj.grade;
+    const level = gradeObj.level;
+    const totalTime = Math.round((Date.now() - state.startTime) / 1000);
+    
+    document.getElementById('resultScore').textContent = percent + '%';
+    document.getElementById('statCorrect').textContent = forceZero ? 0 : correct;
+    document.getElementById('statWrong').textContent = forceZero ? total : (wrong + unanswered);
+    document.getElementById('statViolations').textContent = state.violations;
+    document.getElementById('statTime').textContent = totalTime + 'с';
+    document.getElementById('resultDate').textContent = new Date().toLocaleString('uk-UA');
+    
+    const gradeEl = document.getElementById('resultGrade');
+    if (forceZero) {
+        gradeEl.innerHTML = '❌ Анульовано (3 порушення)';
+        gradeEl.className = 'result-grade grade-0';
+    } else {
+        gradeEl.innerHTML = `🏆 Оцінка: ${grade} балів<span class="grade-level">${level} рівень</span>`;
+        gradeEl.className = `result-grade grade-${grade}`;
+    }
+    
+    saveAttempt(state.studentName, grade, percent, state.violations);
+    sendToTelegram(correct, total, grade, level, percent, totalTime, forceZero);
+    
+    // ✅ НЕГАЙНО показуємо екран результатів
+    showScreen('resultScreen');
+}
+
+async function sendToTelegram(correct, total, grade, level, percent, time, forceZero) {
+    const now = new Date().toLocaleString('uk-UA');
+    const violationsText = state.violations >= CONFIG.MAX_VIOLATIONS 
+        ? `${state.violations} (тест анульовано)` 
+        : state.violations;
+    
+    const message = `📋 РЕЗУЛЬТАТ ТЕСТУ З ФІЗИЧНОЇ КУЛЬТУРИ
+
+👤 <b>ПІБ:</b> ${state.studentName}
+🎓 <b>Група:</b> ${state.studentGroup}
+📅 <b>Дата:</b> ${now}
+📚 <b>Тема:</b> ${CONFIG.TOPIC}
+
+📊 <b>Результат:</b> ${correct}/${total} (${percent}%)
+🎯 <b>Оцінка:</b> ${forceZero ? '0 (анульовано)' : `${grade}/11 балів (${level} рівень)`}
+⚠️ <b>Порушень:</b> ${violationsText}
+⏱ <b>Час проходження:</b> ${time} с`;
+    
+    try {
+        const url = `https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage`;
+        await fetch(url, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                chat_id: CONFIG.CHAT_ID,
+                text: message,
+                parse_mode: 'HTML'
+            })
+        });
+    } catch(e) {
+        console.error('Помилка відправки:', e);
+    }
+}
+
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+document.getElementById('startForm').addEventListener('submit', startTest);
+</script>
+</body>
+</html>
